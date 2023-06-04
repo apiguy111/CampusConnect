@@ -100,7 +100,7 @@ const TechnicalClub = () => {
                 onPress={handleSubmit}
                 disabled={!isValid}
               >
-                <Text style={styles.buttonText(isValid, values.program)}>
+                <Text style={styles.buttonText(isValid, values.state)}>
                   Next
                 </Text>
               </Pressable>

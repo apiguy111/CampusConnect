@@ -8,9 +8,28 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React from "react";
+import { useEffect } from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { StackActions } from "@react-navigation/native";
 
-const WelcomeScreen = () => {
+const WelcomeScreen = ({ navigation }) => {
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      e.preventDefault();
+      if (
+        navigation.dangerouslyGetState().routes[
+          navigation.dangerouslyGetState().index
+        ].name !== "WelcomeScreen"
+      ) {
+        navigation.dispatch(StackActions.replace("WelcomeScreen"));
+      } else {
+        unsubscribe();
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -23,17 +42,25 @@ const WelcomeScreen = () => {
       <View style={styles.underline} />
       <View style={styles.secondUnderline} />
 
-      <Pressable titleSize={20} style={styles.logIn}>
-        <TouchableOpacity>
+      <TouchableOpacity style={styles.logIn} activeOpacity={0.9}>
+        <Pressable
+          titleSize={20}
+          style={styles.button}
+          onPress={() => navigation.push("LogInScreen")}
+        >
           <Text style={styles.buttonText}>Log in</Text>
-        </TouchableOpacity>
-      </Pressable>
+        </Pressable>
+      </TouchableOpacity>
 
-      <Pressable titleSize={20} style={styles.signUp}>
-        <TouchableOpacity>
+      <TouchableOpacity style={styles.signUp} activeOpacity={0.9}>
+        <Pressable
+          titleSize={20}
+          style={styles.button}
+          onPress={() => navigation.push("SignupScreen")}
+        >
           <Text style={styles.signButtonText}>Sign up</Text>
-        </TouchableOpacity>
-      </Pressable>
+        </Pressable>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -106,7 +133,7 @@ const styles = StyleSheet.create({
 
   logIn: {
     position: "absolute",
-    width: 332,
+    width: "92%",
     height: 43,
     left: 16,
     top: 622,

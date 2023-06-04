@@ -1,14 +1,16 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import React from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import SignupForm from "../components/signupForm/SignupForm";
 
-const SignupScreen = () => (
+const SignupScreen = ({ navigation }) => (
   <SafeAreaView style={styles.container}>
-    <View>
-      <Text style={styles.signUp}>Sign up</Text>
-    </View>
-    <SignupForm />
+    <ScrollView>
+      <View>
+        <Text style={styles.signUp}>Sign up</Text>
+      </View>
+      <SignupForm navigation={navigation} />
+    </ScrollView>
   </SafeAreaView>
 );
 

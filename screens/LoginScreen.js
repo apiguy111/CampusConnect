@@ -3,12 +3,12 @@ import React from "react";
 import LoginForm from "../components/loginForm/LoginForm";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-const LogInScreen = () => (
+const LogInScreen = ({ navigation }) => (
   <SafeAreaView style={styles.container}>
     <View>
       <Text style={styles.logIn}>Log in</Text>
     </View>
-    <LoginForm />
+    <LoginForm navigation={navigation} />
   </SafeAreaView>
 );
 

@@ -4,13 +4,42 @@ import * as Yup from "yup";
 import { Formik } from "formik";
 import { TextInput } from "react-native";
 import { TouchableOpacity } from "react-native";
+import { app, database } from "../../firebaseConfig";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { collection, addDoc } from "firebase/firestore";
 
-const SignupForm = () => {
+const SignupForm = ({ navigation }) => {
+  let auth = getAuth();
+  const collectionRef = collection(database, "users");
+
+  const handleSignup = async (name, email, phone, password) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      await addDoc(collectionRef, {
+        name: name,
+        email: email,
+        phone: phone,
+        uid: user.uid,
+      });
+
+      console.log("User successfully saved to database");
+    } catch (error) {
+      console.error("Error saving user to database", error);
+    }
+  };
+
   const signupFormSchema = Yup.object().shape({
     name: Yup.string()
       .min(2, "Name must be at least 2 characters")
       .max(30)
       .required("Name is required"),
+    email: Yup.string().email().required("Email is required"),
     phone: Yup.string()
       .matches(/^[0-9]+$/, "Phone number must be digits only")
       .min(10, "Phone number must be at least 10 digits")
@@ -29,6 +58,7 @@ const SignupForm = () => {
       <Formik
         initialValues={{
           name: "",
+          email: "",
           phone: "",
           password: "",
           confirmPassword: "",
@@ -63,8 +93,21 @@ const SignupForm = () => {
             <View style={[styles.inputField]}>
               <TextInput
                 placeholderTextColor="#A7A7A7"
+                placeholder="Email"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                value={values.email}
+              />
+            </View>
+
+            <View style={[styles.inputField]}>
+              <TextInput
+                placeholderTextColor="#A7A7A7"
                 placeholder="Phone number"
                 autoCapitalize="none"
+                keyboardType="numeric"
                 onChangeText={handleChange("phone")}
                 onBlur={handleBlur("phone")}
                 value={values.phone}
@@ -102,7 +145,7 @@ const SignupForm = () => {
             <Pressable
               titleSize={20}
               style={styles.button(isValid)}
-              onPress={handleSubmit}
+              onPress={handleSignup}
             >
               <Text style={styles.buttonText}>Sign up</Text>
             </Pressable>
@@ -113,7 +156,7 @@ const SignupForm = () => {
 
             <View style={styles.signupContainer}>
               <Text>Already have an account?</Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.push("LogInScreen")}>
                 <Text style={{ color: "#6BB0F5" }}> Log in</Text>
               </TouchableOpacity>
             </View>
@@ -143,6 +186,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     minHeight: 42,
     borderRadius: 20,
+    marginTop: 10,
   }),
 
   buttonText: {
@@ -155,7 +199,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: "13.21%",
     right: "53.78%",
-    top: 380,
+    marginBottom: 80,
     bottom: 35,
     backgroundColor: "#979292",
     borderRadius: 10,
@@ -166,7 +210,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: "53.78%",
     right: "13.21%",
-    top: 380,
+    marginBottom: 80,
     bottom: 35,
     backgroundColor: "#979292",
     borderRadius: 10,
@@ -178,7 +222,7 @@ const styles = StyleSheet.create({
     width: 17,
     height: 17,
     left: 159.32,
-    top: 375,
+    top: 427,
     fontWeight: "700",
     fontSize: 14,
     lineHeight: 17,
@@ -191,7 +235,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     justifyContent: "center",
-    marginTop: 200,
+    marginTop: 150,
   },
 });
 

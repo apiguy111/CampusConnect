@@ -26,8 +26,10 @@ const UserPicture = ({ post }) => {
 const UserDetails = ({ post }) => {
   return (
     <View>
-      <View style={{ flexDirection: "row" }}>
-        <Text style={styles.name}>{post.user}</Text>
+      <View
+        style={{ marginTop: 55, flexDirection: "row", alignSelf: "center" }}
+      >
+        <Text style={[styles.name]}>{post.user}</Text>
         <Image
           source={require("../../assets/blueTick.png")}
           style={[styles.tick]}
@@ -44,7 +46,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    position: "relative",
     backgroundColor: "#fff",
   },
   coverPhoto: {
@@ -61,11 +62,10 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 2,
     borderColor: "#fff",
+    zIndex: 1,
   },
 
   name: {
-    marginTop: 60,
-    left: 100,
     fontSize: 24,
     fontWeight: "600",
     color: "#FCEAF0",
@@ -83,6 +83,8 @@ const styles = StyleSheet.create({
   tick: {
     height: 16,
     width: 16,
+    bottom: -8,
+    left: 6,
   },
 
   bio: {

@@ -5,6 +5,10 @@ import PersonalDetails from "../components/clubProfile/PersonalDetails";
 import { StyleSheet } from "react-native";
 import Header from "../components/profile/Header";
 import { POSTS2 } from "../data/posts";
+import Members from "../components/clubProfile/Members";
+import About from "../components/clubProfile/About";
+import Post from "../components/clubProfile/Post";
+import { POSTS } from "../data/postsDuplicate";
 
 const ClubProfileScreen = () => {
   return (
@@ -13,6 +17,11 @@ const ClubProfileScreen = () => {
       <ScrollView>
         <CoverPhoto post={POSTS2[1]} />
         <PersonalDetails post={POSTS2[1]} />
+        <Members />
+        <About />
+        {POSTS.map((post, index) => (
+          <Post post={post} key={index} />
+        ))}
       </ScrollView>
     </View>
   );

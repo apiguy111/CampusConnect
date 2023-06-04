@@ -5,8 +5,45 @@ import { Formik } from "formik";
 import { TextInput } from "react-native";
 import Validator from "email-validator";
 import { TouchableOpacity } from "react-native";
+import { app } from "../../firebaseConfig";
+import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
 
-const LoginForm = () => {
+const LoginForm = ({ navigation }) => {
+  let auth = getAuth();
+
+  const handleLogin = (email, password) => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((response) => {
+        console.log(response.user);
+      })
+      .catch((error) => {
+        let errorMessage = "";
+        if (error.code === "auth/user-not-found") {
+          errorMessage =
+            "Sorry, we couldn't find an account with that email address.";
+        } else if (error.code === "auth/wrong-password") {
+          errorMessage =
+            "Sorry, your password was incorrect. Please try again.";
+        } else if (error.code === "auth/invalid-email") {
+          errorMessage = "Please enter a valid email address.";
+        } else if (error.code === "auth/too-many-requests") {
+          errorMessage =
+            "You have exceeded the maximum number of login attempts. Please try again later.";
+        } else {
+          errorMessage = error.message;
+        }
+        alert(errorMessage);
+      });
+  };
+
+  const signInWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const LoginFormSchema = Yup.object().shape({
     email: Yup.string().email().required("An email is required"),
     password: Yup.string()
@@ -19,7 +56,7 @@ const LoginForm = () => {
       <Formik
         initialValues={{ email: "", password: "" }}
         onSubmit={(values) => {
-          onLogin(values.email, values.password);
+          handleLogin(values.email, values.password);
         }}
         validationSchema={LoginFormSchema}
         validateOnMount={true}
@@ -45,7 +82,7 @@ const LoginForm = () => {
               ]}
             >
               <TextInput
-                placeholderTextColor="#444"
+                placeholderTextColor="#A7A7A7"
                 placeholder="Phone number, username or email"
                 autoCapitalize="none"
                 keyboardType="email-address"
@@ -70,7 +107,7 @@ const LoginForm = () => {
               ]}
             >
               <TextInput
-                placeholderTextColor="#444"
+                placeholderTextColor="#A7A7A7"
                 placeholder="Password"
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -84,20 +121,23 @@ const LoginForm = () => {
             <View style={{ alignItems: "flex-end", marginBottom: 30 }}>
               <Text style={{ color: "#6BB0F5" }}>Forgot password</Text>
             </View>
-            <Pressable
-              titleSize={20}
-              style={styles.button(isValid)}
-              onPress={handleSubmit}
-            >
-              <Text style={styles.buttonText}>Log In</Text>
-            </Pressable>
+            <View>
+              <TouchableOpacity
+                titleSize={20}
+                style={styles.button(isValid)}
+                onPress={handleSubmit}
+                activeOpacity={0.9}
+              >
+                <Text style={styles.buttonText}>Log In</Text>
+              </TouchableOpacity>
+            </View>
 
             <View style={styles.underline} />
             <Text style={styles.text}>Or</Text>
             <View style={styles.secondUnderline} />
             <View style={styles.container}>
               <View style={styles.socialIcons}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={signInWithGoogle}>
                   <Image
                     source={require("../../assets/google.png")}
                     style={styles.icon}

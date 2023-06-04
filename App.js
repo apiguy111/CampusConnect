@@ -1,6 +1,6 @@
 import * as React from "react";
-import ClubProfileScreen from "./screens/ClubProfileScreen";
+import SignedInStack from "./navigation";
 
 export default function App() {
-  return <ClubProfileScreen />;
+  return <SignedInStack />;
 }

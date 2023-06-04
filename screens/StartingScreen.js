@@ -1,9 +1,21 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 import React from "react";
 
 const StartingScreen = () => {
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigation.navigate("WelcomeScreen");
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [navigation]);
+
   return (
     <SafeAreaView style={styles.container}>
       <Image
